@@ -1,6 +1,6 @@
 <?php
 
-namespace PartyUI;
+namespace PartyUI; // Pastikan namespace ini benar
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
@@ -44,7 +44,8 @@ class Main extends PluginBase implements Listener {
                         ["text" => "Join Party"],
                         ["text" => "Leave Party"],
                         ["text" => "List Parties"],
-                        ["text" => "View Party Members"]
+                        ["text" => "View Party Members"],
+                        ["text" => "Show Invites"] // Menambahkan tombol untuk melihat undangan
                     ]
                 ];
             }
@@ -67,6 +68,9 @@ class Main extends PluginBase implements Listener {
                         break;
                     case 4:
                         $this->partyManager->showPartyMembers($this->player);
+                        break;
+                    case 5:
+                        $this->partyManager->showInvites($this->player); // Mengambil undangan
                         break;
                 }
             }
@@ -93,6 +97,9 @@ class Main extends PluginBase implements Listener {
                         $sender->sendMessage("Player not found.");
                     }
                 }
+                return true;
+            case "showinvites": // Perintah untuk melihat undangan
+                $this->partyManager->showInvites($sender);
                 return true;
             // Tambah case lain sesuai kebutuhan
         }
