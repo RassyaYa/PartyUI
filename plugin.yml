@@ -1,5 +1,5 @@
 name: PartyUI
-main: PartyPlugin\Main
+main: PartyUI\Main
 version: 1.1.0
 api: [5.0.0]
 author: NamaAnda
