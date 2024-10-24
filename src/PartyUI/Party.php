@@ -6,9 +6,9 @@ use pocketmine\player\Player;
 
 class Party {
 
-    private $leader;
-    private $members = [];
-    private $invites = [];
+    private Player $leader;
+    private array $members = [];
+    private array $invites = []; // Properti undangan
 
     public function __construct(Player $leader) {
         $this->leader = $leader;
@@ -20,7 +20,7 @@ class Party {
     }
 
     public function invite(Player $invited): void {
-        $this->invites[$invited->getName()] = $invited;
+        $this->invites[$invited->getName()] = $invited; // Menyimpan undangan
     }
 
     public function kick(Player $player): void {
@@ -47,5 +47,10 @@ class Party {
 
     public function getMembers(): array {
         return array_map(fn($member) => $member->getName(), $this->members);
+    }
+
+    // Metode baru untuk mendapatkan undangan
+    public function getInvites(): array {
+        return array_keys($this->invites); // Mengembalikan daftar nama pemain yang diundang
     }
 }
