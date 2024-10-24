@@ -1,0 +1,16 @@
+name: PartyUI
+main: PartyPlugin\Main
+version: 1.1.0
+api: [5.0.0]
+author: NamaAnda
+description: A party plugin with UI support for PocketMine-MP.
+commands:
+  party:
+    description: Open the party menu
+    usage: "/party"
+  partyinvite:
+    description: Invite a player to your party
+    usage: "/partyinvite <player>"
+  partykick:
+    description: Kick a player from your party
+    usage: "/partykick <player>"
