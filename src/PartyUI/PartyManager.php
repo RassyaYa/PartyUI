@@ -7,7 +7,7 @@ use pocketmine\player\Player;
 class PartyManager {
 
     private static $instance;
-    private $parties = [];
+    private array $parties = [];
 
     public function __construct() {
         self::$instance = $this;
@@ -22,13 +22,14 @@ class PartyManager {
             $player->sendMessage("You are already in a party!");
             return;
         }
-        $this->parties[$player->getName()] = new Party($player); // Referensi ke Party yang benar
+        $this->parties[$player->getName()] = new Party($player);
     }
 
     public function invitePlayer(Player $leader, Player $invited): void {
         $party = $this->getPlayerParty($leader);
         if ($party !== null && $party->isLeader($leader)) {
-            $party->invite($invited); // Menggunakan metode dari kelas Party
+            $party->invite($invited);
+            $leader->sendMessage("Invited {$invited->getName()} to your party.");
         } else {
             $leader->sendMessage("You are not the leader of a party!");
         }
@@ -38,6 +39,7 @@ class PartyManager {
         $party = $this->getPlayerParty($leader);
         if ($party !== null && $party->isLeader($leader)) {
             $party->kick($target);
+            $leader->sendMessage("Kicked {$target->getName()} from the party.");
         } else {
             $leader->sendMessage("You are not the leader of a party!");
         }
@@ -47,6 +49,7 @@ class PartyManager {
         $party = $this->getPlayerParty($player);
         if ($party !== null) {
             $party->removeMember($player);
+            $player->sendMessage("You have left the party.");
         } else {
             $player->sendMessage("You are not in a party!");
         }
@@ -78,6 +81,21 @@ class PartyManager {
         if ($party !== null) {
             $members = $party->getMembers();
             $player->sendMessage("Party members: " . implode(", ", $members));
+        } else {
+            $player->sendMessage("You are not in a party!");
+        }
+    }
+
+    // Metode baru untuk menampilkan undangan
+    public function showInvites(Player $player): void {
+        $party = $this->getPlayerParty($player);
+        if ($party !== null) {
+            $invites = $party->getInvites();
+            if (empty($invites)) {
+                $player->sendMessage("No invitations.");
+            } else {
+                $player->sendMessage("Invited players: " . implode(", ", $invites));
+            }
         } else {
             $player->sendMessage("You are not in a party!");
         }
