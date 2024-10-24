@@ -1,6 +1,6 @@
 <?php
 
-namespace PartyUI; // Pastikan namespace ini benar
+namespace PartyUI;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
@@ -85,9 +85,17 @@ class Main extends PluginBase implements Listener {
 
         switch (strtolower($command->getName())) {
             case "party":
+                if (!$sender->hasPermission("partyui.command.party")) {
+                    $sender->sendMessage("You do not have permission to use this command.");
+                    return true;
+                }
                 $this->showPartyUI($sender); // Tampilkan UI party
                 return true;
             case "partyinvite":
+                if (!$sender->hasPermission("partyui.command.partyinvite")) {
+                    $sender->sendMessage("You do not have permission to use this command.");
+                    return true;
+                }
                 if (isset($args[0])) {
                     $invitedPlayer = $this->getServer()->getPlayerByPrefix($args[0]);
                     if ($invitedPlayer !== null) {
@@ -98,10 +106,13 @@ class Main extends PluginBase implements Listener {
                     }
                 }
                 return true;
-            case "showinvites": // Perintah untuk melihat undangan
-                $this->partyManager->showInvites($sender);
+            case "showinvites":
+                if (!$sender->hasPermission("partyui.command.showinvites")) {
+                    $sender->sendMessage("You do not have permission to use this command.");
+                    return true;
+                }
+                $this->partyManager->showInvites($sender); // Tampilkan undangan
                 return true;
-            // Tambah case lain sesuai kebutuhan
         }
 
         return false; // Jika command tidak dikenali
