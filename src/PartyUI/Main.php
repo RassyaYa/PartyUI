@@ -12,28 +12,26 @@ use pocketmine\utils\TextFormat;
 
 class Main extends PluginBase implements Listener {
 
-    private $partyManager;
+    private PartyManager $partyManager; // Tipe data untuk partyManager
 
     public function onEnable(): void {
-        // Inisialisasi PartyManager dan memastikan kita memanfaatkannya.
-        $this->partyManager = new PartyManager();
+        $this->partyManager = new PartyManager(); // Inisialisasi PartyManager
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->getLogger()->info(TextFormat::GREEN . "Party Plugin Enabled");
     }
 
-    // Menggunakan partyManager
     public function getPartyManager(): PartyManager {
-        return $this->partyManager;
+        return $this->partyManager; // Mengembalikan instance PartyManager
     }
 
     public function showPartyUI(Player $player): void {
-        $form = new class($player, $this->getPartyManager()) implements Form {
-            private $player;
-            private $partyManager;
+        $form = new class($player, $this->partyManager) implements Form {
+            private Player $player;
+            private PartyManager $partyManager;
 
             public function __construct(Player $player, PartyManager $partyManager) {
-                $this->player = $player;
-                $this->partyManager = $partyManager;
+                $this->player = $player; // Menyimpan player
+                $this->partyManager = $partyManager; // Menyimpan PartyManager
             }
 
             public function jsonSerialize(): array {
@@ -55,64 +53,50 @@ class Main extends PluginBase implements Listener {
                 if ($data === null) return;
                 switch ($data) {
                     case 0:
-                        $this->partyManager->createParty($player); // Menggunakan partyManager
-                        $player->sendMessage("Party Created!");
+                        $this->partyManager->createParty($this->player); // Gunakan $this->player
+                        $this->player->sendMessage("Party Created!");
                         break;
                     case 1:
-                        $this->partyManager->showJoinPartyUI($player);
+                        $this->partyManager->showJoinPartyUI($this->player);
                         break;
                     case 2:
-                        $this->partyManager->leaveParty($player);
+                        $this->partyManager->leaveParty($this->player);
                         break;
                     case 3:
-                        $this->partyManager->listParties($player);
+                        $this->partyManager->listParties($this->player);
                         break;
                     case 4:
-                        $this->partyManager->showPartyMembers($player);
+                        $this->partyManager->showPartyMembers($this->player);
                         break;
                 }
             }
         };
-        $player->sendForm($form);
+        $player->sendForm($form); // Kirim form ke player
     }
 
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool {
         if (!$sender instanceof Player) {
-            return false;
+            return false; // Pastikan sender adalah Player
         }
 
         switch (strtolower($command->getName())) {
             case "party":
-                $this->showPartyUI($sender);
+                $this->showPartyUI($sender); // Tampilkan UI party
                 return true;
             case "partyinvite":
                 if (isset($args[0])) {
                     $invitedPlayer = $this->getServer()->getPlayerByPrefix($args[0]);
                     if ($invitedPlayer !== null) {
-                        $this->partyManager->invitePlayer($sender, $invitedPlayer);
-                        $sender->sendMessage("Invited {$invitedPlayer->getName()} to the party!");
+                        $this->partyManager->invitePlayer($sender, $invitedPlayer); // Undang pemain
+                        $sender->sendMessage("Invited {$invitedPlayer->getName()} to your party.");
                     } else {
-                        $sender->sendMessage("Player not found!");
+                        $sender->sendMessage("Player not found.");
                     }
-                } else {
-                    $sender->sendMessage("Usage: /partyinvite <player>");
                 }
                 return true;
-            case "partykick":
-                if (isset($args[0])) {
-                    $targetPlayer = $this->getServer()->getPlayerByPrefix($args[0]);
-                    if ($targetPlayer !== null) {
-                        $this->partyManager->kickPlayer($sender, $targetPlayer);
-                        $sender->sendMessage("Kicked {$targetPlayer->getName()} from the party!");
-                    } else {
-                        $sender->sendMessage("Player not found!");
-                    }
-                } else {
-                    $sender->sendMessage("Usage: /partykick <player>");
-                }
-                return true;
+            // Tambah case lain sesuai kebutuhan
         }
 
-        return false;
+        return false; // Jika command tidak dikenali
     }
 }
