@@ -1,16 +1,28 @@
 name: PartyUI
+version: 1.0.0
 main: PartyUI\Main
-version: 1.1.0
-api: [5.0.0]
+api: 5.0.0
 author: VsrStudio
-description: A party plugin with UI support for PocketMine-MP.
 commands:
   party:
     description: Open the party menu
-    usage: "/party"
+    usage: /party
+    permission: partyui.command.party
   partyinvite:
     description: Invite a player to your party
-    usage: "/partyinvite <player>"
-  partykick:
-    description: Kick a player from your party
-    usage: "/partykick <player>"
+    usage: /partyinvite <player>
+    permission: partyui.command.partyinvite
+  showinvites:
+    description: Show your party invites
+    usage: /showinvites
+    permission: partyui.command.showinvites
+permissions:
+  partyui.command.party:
+    description: Allows the player to open the party menu
+    default: true
+  partyui.command.partyinvite:
+    description: Allows the player to invite other players to their party
+    default: true
+  partyui.command.showinvites:
+    description: Allows the player to see their party invites
+    default: true
