@@ -15,55 +15,37 @@ class Party {
         $this->members[] = $leader;
     }
 
-    public function getLeader(): Player {
-        return $this->leader;
-    }
-
     public function isLeader(Player $player): bool {
-        return $player === $this->leader;
+        return $this->leader === $player;
     }
 
-    public function invite(Player $player): void {
-        $this->invites[$player->getName()] = $player;
-        $player->sendMessage("You have been invited to join the party by " . $this->leader->getName());
+    public function invite(Player $invited): void {
+        $this->invites[$invited->getName()] = $invited;
     }
 
-    public function addMember(Player $player): void {
-        if (isset($this->invites[$player->getName()])) {
-            $this->members[] = $player;
-            unset($this->invites[$player->getName()]);
-            foreach ($this->members as $member) {
-                $member->sendMessage($player->getName() . " has joined the party!");
-            }
+    public function kick(Player $player): void {
+        $key = array_search($player, $this->members);
+        if ($key !== false) {
+            unset($this->members[$key]);
         }
     }
 
     public function removeMember(Player $player): void {
-        if (($key = array_search($player, $this->members, true)) !== false) {
+        $key = array_search($player, $this->members);
+        if ($key !== false) {
             unset($this->members[$key]);
-            foreach ($this->members as $member) {
-                $member->sendMessage($player->getName() . " has left the party.");
-            }
         }
+    }
+
+    public function addMember(Player $player): void {
+        $this->members[] = $player;
     }
 
     public function isMember(Player $player): bool {
-        return in_array($player, $this->members, true);
-    }
-
-    public function kick(Player $player): void {
-        if (($key = array_search($player, $this->members, true)) !== false) {
-            unset($this->members[$key]);
-            foreach ($this->members as $member) {
-                $member->sendMessage($player->getName() . " has been kicked from the party.");
-            }
-            $player->sendMessage("You have been kicked from the party.");
-        }
+        return in_array($player, $this->members);
     }
 
     public function getMembers(): array {
-        return array_map(function(Player $player) {
-            return $player->getName();
-        }, $this->members);
+        return array_map(fn($member) => $member->getName(), $this->members);
     }
 }
