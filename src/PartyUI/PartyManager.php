@@ -3,7 +3,6 @@
 namespace PartyUI;
 
 use pocketmine\player\Player;
-use PartyPlugin\Party;
 
 class PartyManager {
 
@@ -23,13 +22,13 @@ class PartyManager {
             $player->sendMessage("You are already in a party!");
             return;
         }
-        $this->parties[$player->getName()] = new Party($player);
+        $this->parties[$player->getName()] = new Party($player); // Referensi ke Party yang benar
     }
 
     public function invitePlayer(Player $leader, Player $invited): void {
         $party = $this->getPlayerParty($leader);
         if ($party !== null && $party->isLeader($leader)) {
-            $party->invite($invited);
+            $party->invite($invited); // Menggunakan metode dari kelas Party
         } else {
             $leader->sendMessage("You are not the leader of a party!");
         }
